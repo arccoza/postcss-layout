@@ -102,6 +102,9 @@ module.exports = postcss.plugin('postcss-layout', function (opts) {
           else if(rule.layoutValues.indexOf('rows') + 1) {
             rowLayout(css, rule, rule.layoutDecl, rule.layoutValues, rule.layoutRule, rule.layoutPseudo);
           }
+          else {
+            throw rule.layoutDecl.error('Unknown \'layout\' property value: ' + rule.layoutDecl.value, { plugin: 'postcss-layout' });
+          }
         }
 
         if(rule.isGridItem) {
@@ -172,11 +175,15 @@ function stackLayout(css, rule, decl, layoutValues, layoutRule, layoutPseudo) {
     // layoutRule.append({prop: 'margin', value: '0 0 0 auto'});
     layoutRule.append({prop: 'margin-left', value: 'auto'});
   }
-  else if(layoutValues.indexOf('center') + 1) {
+  // else if(layoutValues.indexOf('center') + 1) {
+  else {
     // layoutRule.append({prop: 'margin', value: '0 auto'});
     layoutRule.append({prop: 'margin-left', value: 'auto'});
     layoutRule.append({prop: 'margin-right', value: 'auto'});
   }
+  
+  // Remove 'layout' property from result.
+  decl.remove();
 
   return;
 }
@@ -221,6 +228,9 @@ function columnLayout(css, rule, decl, layoutValues, layoutRule, layoutPseudo) {
   rule.insertAfter(decl, {prop: 'width', value: '100%', source: decl.source});
   layoutRule.append({prop: 'display', value: 'table-cell'});
 
+  // Remove the 'layout' property from the result.
+  decl.remove();
+
   return;
 }
 
@@ -231,6 +241,9 @@ function rowLayout(css, rule, decl, layoutValues, layoutRule, layoutPseudo) {
   rule.insertAfter(decl, {prop: 'table-layout', value: 'fixed', source: decl.source});
   rule.insertAfter(decl, {prop: 'width', value: '100%', source: decl.source});
   layoutRule.append({prop: 'display', value: 'table-row'});
+
+  // Remove the 'layout' property from the result.
+  decl.remove();
 
   return;
 }
