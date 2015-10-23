@@ -9,6 +9,7 @@ test.createStream()
   .pipe(process.stdout);
 
 var processor = postcss([plugin]);
+
 var fixtures = {
 	"@grid": { 
 		"in": "@grid g12 { count: 12; gutter: 1em; }",
@@ -19,15 +20,25 @@ var fixtures = {
 	},
 	"grid": { 
 		"in": ".test { layout: lines; grid: g12; }",
-		"out": ""
+		"out": "".concat(".test { box-sizing: border-box; margin-right: -0.5em; margin-left: -0.5em; }\n",
+			".test > * { box-sizing: border-box; display: inline-block; text-align: initial; }\n",
+			".test:before { position: relative; content: \"\"; display: inline-block; width: 0; height: 100%; vertical-align: middle; }")
 	},
 	"grid undefined": { 
 		"in": ".test { grid: g15; }",
 		"out": postcss.CssSyntaxError
 	},
+	"grid span": { 
+		"in": ".test { g12-span: 6; }",
+		"out": ".test { margin-right: 0.5em; margin-left: 0.5em; width: calc(50% - 1em); }"
+	},
 	"grid span undefined": { 
 		"in": ".test { g14-span: 3; }",
 		"out": postcss.CssSyntaxError
+	},
+	"layout stack": { 
+		"in": ".test { layout: stack; }",
+		"out": ""
 	}
 }
 
@@ -46,12 +57,12 @@ test('@grid rule; define a grid', function(t) {
 });
 
 test('grid property; use a grid', function(t) {
-	t.plan(1);
+	t.plan(2);
 	var lazy = processor.process(fixtures['grid'].in);
 	var css = lazy.css;
 
-	//t.equal(css, fixtures["grid"].out);
-	console.log(css);
+	t.equal(css, fixtures["grid"].out);
+	// console.log(css);
 
 	lazy = processor.process(fixtures['grid undefined'].in);
 	css = null;
@@ -59,10 +70,16 @@ test('grid property; use a grid', function(t) {
 	t.throws(function() { css = lazy.css; }, fixtures['grid undefined'].out);
 });
 
-test('span property; error handling', function(t) {
-	t.plan(1);
-	var lazy = processor.process(fixtures['grid span undefined'].in);
-	var css = null;
+test('span property; use grid span', function(t) {
+	t.plan(2);
+	var lazy = processor.process(fixtures['grid span'].in);
+	var css = lazy.css;
+
+	t.equal(css, fixtures["grid span"].out);
+	// console.log(css);
+
+	lazy = processor.process(fixtures['grid span undefined'].in);
+	css = null;
 
 	t.throws(function() { css = lazy.css; }, fixtures['grid span undefined'].out);
 });
