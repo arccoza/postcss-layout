@@ -19,29 +19,35 @@ module.exports = postcss.plugin('postcss-layout', function (opts) {
           // Look for layout prop in rule.
           if(decl.prop == 'layout') {
             var sels = [];
-            var layoutRule = null;
-            var layoutPseudo = null;
-            var layoutValues = decl.value.split(/\s*,\s*|\s/);
+            // var layoutRule = null;
+            // var layoutPseudo = null;
+            // var layoutValues = decl.value.split(/\s*,\s*|\s/);
+            layout.childrenRule = null;
+            layout.pseudoRule = null;
+            layout.values = decl.value.split(/\s*,\s*|\s/);
             // console.log(layoutValues);
             
             for (var i = 0; i < rule.selectors.length; i++) {
               sels.push(rule.selectors[i] + ' > *');
             };
 
-            layoutRule = postcss.rule({selector: sels.join(', '), source: decl.source});
+            layout.childrenRule = layoutRule = postcss.rule({selector: sels.join(', '), source: decl.source});
             sels = [];
 
             for (var i = 0; i < rule.selectors.length; i++) {
               sels.push(rule.selectors[i] + ':before');
             };
 
-            layoutPseudo = postcss.rule({selector: sels.join(', '), source: decl.source});
+            layout.pseudoRule /*= layoutPseudo*/ = postcss.rule({selector: sels.join(', '), source: decl.source});
 
-            rule.hasLayout = true;
-            rule.layoutRule = layoutRule;
-            rule.layoutPseudo = layoutPseudo;
-            rule.layoutValues = layoutValues;
-            rule.layoutDecl = decl;
+            layout.isSet = true;
+            layout.decl = decl;
+
+            // rule.hasLayout = true;
+            // rule.layoutRule = layoutRule;
+            // rule.layoutPseudo = layoutPseudo;
+            // rule.layoutValues = layoutValues;
+            // rule.layoutDecl = decl;
           }
           // Look for grid prop in rule.
           else if(decl.prop == 'grid') {
@@ -52,10 +58,14 @@ module.exports = postcss.plugin('postcss-layout', function (opts) {
             if(!grid) {
               throw decl.error('Undefined grid: ' + decl.value, { plugin: 'postcss-layout' });
             }
+
+            layout.isGridContainer = true;
+            layout.gridContainerDecl = decl;
+            layout.grid = grid;
             
-            rule.isGridContainer = true;
-            rule.gridContainerDecl = decl;
-            rule.grid = grid;
+            // rule.isGridContainer = true;
+            // rule.gridContainerDecl = decl;
+            // rule.grid = grid;
           }
           // Look for grid control props like span.
           else if(decl.prop.indexOf('span') + 1) {
@@ -71,44 +81,48 @@ module.exports = postcss.plugin('postcss-layout', function (opts) {
               throw decl.error('Unknown grid name in span property: ' + decl.prop, { plugin: 'postcss-layout' });
             }
 
-            rule.isGridItem = true;
-            rule.gridItemDecl = decl;
-            rule.grid = grid;
+            layout.isGridItem = true;
+            layout.gridItemDecl = decl;
+            layout.grid = grid;
+
+            // rule.isGridItem = true;
+            // rule.gridItemDecl = decl;
+            // rule.grid = grid;
           }
         });
 
-        if(rule.hasLayout) {
+        if(layout.isSet) {
           // Make sure layouts use 'box-sizing: border-box;' for best results.
-          rule.insertAfter(rule.layoutDecl, {prop: 'box-sizing', value: 'border-box', source: rule.layoutDecl.source});
-          rule.layoutRule.append({prop: 'box-sizing', value: 'border-box'});
+          rule.insertAfter(layout.decl, {prop: 'box-sizing', value: 'border-box', source: layout.decl.source});
+          layout.childrenRule.append({prop: 'box-sizing', value: 'border-box'});
 
           // Stack layout.
-          if(rule.layoutValues.indexOf('stack') + 1) {
-            stackLayout(css, rule, rule.layoutDecl, rule.layoutValues, rule.layoutRule, rule.layoutPseudo);
+          if(layout.values.indexOf('stack') + 1) {
+            stackLayout(css, rule, layout.decl, layout.values, layout.childrenRule, layout.pseudoRule);
           }
           // Line layout.
-          else if(rule.layoutValues.indexOf('lines') + 1) {
-            lineLayout(css, rule, rule.layoutDecl, rule.layoutValues, rule.layoutRule, rule.layoutPseudo);
+          else if(layout.values.indexOf('lines') + 1) {
+            lineLayout(css, rule, layout.decl, layout.values, layout.childrenRule, layout.pseudoRule);
 
-            if(rule.isGridContainer) {
-              gridContainer(css, rule, rule.gridContainerDecl, rule.grid);
+            if(layout.isGridContainer) {
+              gridContainer(css, rule, layout.gridContainerDecl, layout.grid);
             }
           }
           // Columns layout.
-          else if(rule.layoutValues.indexOf('columns') + 1) {
-            columnLayout(css, rule, rule.layoutDecl, rule.layoutValues, rule.layoutRule, rule.layoutPseudo);
+          else if(layout.values.indexOf('columns') + 1) {
+            columnLayout(css, rule, layout.decl, layout.values, layout.childrenRule, layout.pseudoRule);
           }
           // Rows layout.
-          else if(rule.layoutValues.indexOf('rows') + 1) {
-            rowLayout(css, rule, rule.layoutDecl, rule.layoutValues, rule.layoutRule, rule.layoutPseudo);
+          else if(layout.values.indexOf('rows') + 1) {
+            rowLayout(css, rule, layout.decl, layout.values, layout.childrenRule, layout.pseudoRule);
           }
           else {
-            throw rule.layoutDecl.error('Unknown \'layout\' property value: ' + rule.layoutDecl.value, { plugin: 'postcss-layout' });
+            throw layout.decl.error('Unknown \'layout\' property value: ' + layout.decl.value, { plugin: 'postcss-layout' });
           }
         }
 
-        if(rule.isGridItem) {
-          gridItem(css, rule, rule.gridItemDecl, rule.grid);
+        if(layout.isGridItem) {
+          gridItem(css, rule, layout.gridItemDecl, layout.grid);
         }
       });
   };
@@ -181,7 +195,7 @@ function stackLayout(css, rule, decl, layoutValues, layoutRule, layoutPseudo) {
     layoutRule.append({prop: 'margin-left', value: 'auto'});
     layoutRule.append({prop: 'margin-right', value: 'auto'});
   }
-  
+
   // Remove 'layout' property from result.
   decl.remove();
 
