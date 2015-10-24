@@ -3,12 +3,15 @@ var postcss = require('postcss');
 
 module.exports = postcss.plugin('postcss-layout', function (opts) {
   opts = opts || {};
-  var grids = {};
+  // Attach the grids to the opts object if passed in,
+  // mostly so it can be readout by tests.
+  opts._grids = {};
+  var grids = opts._grids;
   
   return function (css, result) {
-    result.grids = grids; // TEMP
     css
       .walkAtRules('grid', function(rule) {
+        // Collect grid definitions.
         processGridDef(css, result, rule, grids);
       });
     css
@@ -16,79 +19,8 @@ module.exports = postcss.plugin('postcss-layout', function (opts) {
         var layout = {};
 
         rule.walkDecls(function(decl) {
-          // Look for layout prop in rule.
-          if(decl.prop == 'layout') {
-            var sels = [];
-            // var layoutRule = null;
-            // var layoutPseudo = null;
-            // var layoutValues = decl.value.split(/\s*,\s*|\s/);
-            layout.childrenRule = null;
-            layout.pseudoRule = null;
-            layout.values = decl.value.split(/\s*,\s*|\s/);
-            // console.log(layoutValues);
-            
-            for (var i = 0; i < rule.selectors.length; i++) {
-              sels.push(rule.selectors[i] + ' > *');
-            };
-
-            layout.childrenRule = layoutRule = postcss.rule({selector: sels.join(', '), source: decl.source});
-            sels = [];
-
-            for (var i = 0; i < rule.selectors.length; i++) {
-              sels.push(rule.selectors[i] + ':before');
-            };
-
-            layout.pseudoRule /*= layoutPseudo*/ = postcss.rule({selector: sels.join(', '), source: decl.source});
-
-            layout.isSet = true;
-            layout.decl = decl;
-
-            // rule.hasLayout = true;
-            // rule.layoutRule = layoutRule;
-            // rule.layoutPseudo = layoutPseudo;
-            // rule.layoutValues = layoutValues;
-            // rule.layoutDecl = decl;
-          }
-          // Look for grid prop in rule.
-          else if(decl.prop == 'grid') {
-            var grid = null;
-            var gridName = decl.value;
-            grid = gridName ? grids[gridName] : null;
-
-            if(!grid) {
-              throw decl.error('Undefined grid: ' + decl.value, { plugin: 'postcss-layout' });
-            }
-
-            layout.isGridContainer = true;
-            layout.gridContainerDecl = decl;
-            layout.grid = grid;
-            
-            // rule.isGridContainer = true;
-            // rule.gridContainerDecl = decl;
-            // rule.grid = grid;
-          }
-          // Look for grid control props like span.
-          else if(decl.prop.indexOf('span') + 1) {
-            // console.log(decl.prop, decl.value);
-            var grid = null;
-            // TODO: Do a suffix check on '-span' instead of just a split on '-',
-            // in case the gridName has a '-' in it.
-            var gridName = decl.prop.split('-');
-            gridName = gridName.length == 2 ? gridName[0] : null;
-            grid = gridName ? grids[gridName] : null;
-
-            if(!grid) {
-              throw decl.error('Unknown grid name in span property: ' + decl.prop, { plugin: 'postcss-layout' });
-            }
-
-            layout.isGridItem = true;
-            layout.gridItemDecl = decl;
-            layout.grid = grid;
-
-            // rule.isGridItem = true;
-            // rule.gridItemDecl = decl;
-            // rule.grid = grid;
-          }
+          // Collect layout info.
+          processLayoutConf(css, result, rule, decl, grids, layout);
         });
 
         if(layout.isSet) {
@@ -129,8 +61,6 @@ module.exports = postcss.plugin('postcss-layout', function (opts) {
 });
 
 function processGridDef(css, result, rule, grids) {
-  //css.grids = grids;//grids || {};
-  result.grids = grids;
   var params = rule.params.split(/\s*,\s*|\s/);
 
   // String.split always returns an array with at least one element, 
@@ -166,7 +96,62 @@ function processGridDef(css, result, rule, grids) {
 }
 
 function processLayoutConf(css, result, rule, decl, grids, layout) {
+  // Look for layout prop in rule.
+  if(decl.prop == 'layout') {
+    var sels = [];
+    layout.childrenRule = null;
+    layout.pseudoRule = null;
+    layout.values = decl.value.split(/\s*,\s*|\s/);
+    // console.log(layoutValues);
+    
+    for (var i = 0; i < rule.selectors.length; i++) {
+      sels.push(rule.selectors[i] + ' > *');
+    };
 
+    layout.childrenRule = layoutRule = postcss.rule({selector: sels.join(', '), source: decl.source});
+    sels = [];
+
+    for (var i = 0; i < rule.selectors.length; i++) {
+      sels.push(rule.selectors[i] + ':before');
+    };
+
+    layout.pseudoRule = postcss.rule({selector: sels.join(', '), source: decl.source});
+
+    layout.isSet = true;
+    layout.decl = decl;
+  }
+  // Look for grid prop in rule.
+  else if(decl.prop == 'grid') {
+    var grid = null;
+    var gridName = decl.value;
+    grid = gridName ? grids[gridName] : null;
+
+    if(!grid) {
+      throw decl.error('Undefined grid: ' + decl.value, { plugin: 'postcss-layout' });
+    }
+
+    layout.isGridContainer = true;
+    layout.gridContainerDecl = decl;
+    layout.grid = grid;
+  }
+  // Look for grid control props like span.
+  else if(decl.prop.indexOf('span') + 1) {
+    // console.log(decl.prop, decl.value);
+    var grid = null;
+    // TODO: Do a suffix check on '-span' instead of just a split on '-',
+    // in case the gridName has a '-' in it.
+    var gridName = decl.prop.split('-');
+    gridName = gridName.length == 2 ? gridName[0] : null;
+    grid = gridName ? grids[gridName] : null;
+
+    if(!grid) {
+      throw decl.error('Unknown grid name in span property: ' + decl.prop, { plugin: 'postcss-layout' });
+    }
+
+    layout.isGridItem = true;
+    layout.gridItemDecl = decl;
+    layout.grid = grid;
+  }
 }
 
 function stackLayout(css, rule, decl, layoutValues, layoutRule, layoutPseudo) {
