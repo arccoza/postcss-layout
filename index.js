@@ -30,11 +30,11 @@ module.exports = postcss.plugin('postcss-layout', function (opts) {
 
           // Stack layout.
           if(layout.values.indexOf('stack') + 1) {
-            stackLayout(css, rule, layout.decl, layout.values, layout.childrenRule, layout.pseudoRule);
+            stackLayout(css, rule, layout.decl, layout);
           }
           // Line layout.
           else if(layout.values.indexOf('lines') + 1) {
-            lineLayout(css, rule, layout.decl, layout.values, layout.childrenRule, layout.pseudoRule);
+            lineLayout(css, rule, layout.decl, layout);
 
             if(layout.isGridContainer) {
               gridContainer(css, rule, layout.gridContainerDecl, layout.grid);
@@ -42,11 +42,11 @@ module.exports = postcss.plugin('postcss-layout', function (opts) {
           }
           // Columns layout.
           else if(layout.values.indexOf('columns') + 1) {
-            columnLayout(css, rule, layout.decl, layout.values, layout.childrenRule, layout.pseudoRule);
+            columnLayout(css, rule, layout.decl, layout);
           }
           // Rows layout.
           else if(layout.values.indexOf('rows') + 1) {
-            rowLayout(css, rule, layout.decl, layout.values, layout.childrenRule, layout.pseudoRule);
+            rowLayout(css, rule, layout.decl, layout);
           }
           else {
             throw layout.decl.error('Unknown \'layout\' property value: ' + layout.decl.value, { plugin: 'postcss-layout' });
@@ -154,31 +154,31 @@ function processLayoutConf(css, result, rule, decl, grids, layout) {
   }
 }
 
-function stackLayout(css, rule, decl, layoutValues, layoutRule, layoutPseudo) {
+function stackLayout(css, rule, decl, layout) {
   css.insertAfter(rule, layoutRule);
 
   // Sizing, expand-to-fill container or shrink-to-fit content (horizontally).
-  if(layoutValues.indexOf('shrink') + 1) {
-    layoutRule.append({prop: 'display', value: 'table'});
+  if(layout.values.indexOf('shrink') + 1) {
+    layout.childrenRule.append({prop: 'display', value: 'table'});
   }
   else {
-    layoutRule.append({prop: 'display', value: 'block'});
+    layout.childrenRule.append({prop: 'display', value: 'block'});
   }
 
   // Alignment.
-  if(layoutValues.indexOf('left') + 1) {
-    // layoutRule.append({prop: 'margin', value: '0 auto 0 0'});
-    layoutRule.append({prop: 'margin-right', value: 'auto'});
+  if(layout.values.indexOf('left') + 1) {
+    // layout.childrenRule.append({prop: 'margin', value: '0 auto 0 0'});
+    layout.childrenRule.append({prop: 'margin-right', value: 'auto'});
   }
-  else if(layoutValues.indexOf('right') + 1) {
-    // layoutRule.append({prop: 'margin', value: '0 0 0 auto'});
-    layoutRule.append({prop: 'margin-left', value: 'auto'});
+  else if(layout.values.indexOf('right') + 1) {
+    // layout.childrenRule.append({prop: 'margin', value: '0 0 0 auto'});
+    layout.childrenRule.append({prop: 'margin-left', value: 'auto'});
   }
-  // else if(layoutValues.indexOf('center') + 1) {
+  // else if(layout.values.indexOf('center') + 1) {
   else {
-    // layoutRule.append({prop: 'margin', value: '0 auto'});
-    layoutRule.append({prop: 'margin-left', value: 'auto'});
-    layoutRule.append({prop: 'margin-right', value: 'auto'});
+    // layout.childrenRule.append({prop: 'margin', value: '0 auto'});
+    layout.childrenRule.append({prop: 'margin-left', value: 'auto'});
+    layout.childrenRule.append({prop: 'margin-right', value: 'auto'});
   }
 
   // Remove 'layout' property from result.
@@ -187,30 +187,30 @@ function stackLayout(css, rule, decl, layoutValues, layoutRule, layoutPseudo) {
   return;
 }
 
-function lineLayout(css, rule, decl, layoutValues, layoutRule, layoutPseudo) {
+function lineLayout(css, rule, decl, layout) {
   var i = null;
-  layoutPseudo.append({prop: 'position', value: 'relative'});
-  layoutPseudo.append({prop: 'content', value: '""'});
-  layoutPseudo.append({prop: 'display', value: 'inline-block'});
-  layoutPseudo.append({prop: 'width', value: '0'});
-  layoutPseudo.append({prop: 'height', value: '100%'});
-  layoutPseudo.append({prop: 'vertical-align', value: 'middle'});
-  layoutRule.append({prop: 'display', value: 'inline-block'});
-  layoutRule.append({prop:'text-align', value: 'initial'});
+  layout.pseudoRule.append({prop: 'position', value: 'relative'});
+  layout.pseudoRule.append({prop: 'content', value: '""'});
+  layout.pseudoRule.append({prop: 'display', value: 'inline-block'});
+  layout.pseudoRule.append({prop: 'width', value: '0'});
+  layout.pseudoRule.append({prop: 'height', value: '100%'});
+  layout.pseudoRule.append({prop: 'vertical-align', value: 'middle'});
+  layout.childrenRule.append({prop: 'display', value: 'inline-block'});
+  layout.childrenRule.append({prop:'text-align', value: 'initial'});
   
-  css.insertAfter(rule, layoutPseudo);
-  css.insertAfter(rule, layoutRule);
+  css.insertAfter(rule, layout.pseudoRule);
+  css.insertAfter(rule, layout.childrenRule);
   
   // Horizontal alignment.
-  i = layoutValues.indexOf('left') + 1 || layoutValues.indexOf('right') + 1 || layoutValues.indexOf('center') + 1;
+  i = layout.values.indexOf('left') + 1 || layout.values.indexOf('right') + 1 || layout.values.indexOf('center') + 1;
   if(i) {
-    rule.insertAfter(decl, {prop: 'text-align', value: layoutValues[i - 1], source: decl.source});
+    rule.insertAfter(decl, {prop: 'text-align', value: layout.values[i - 1], source: decl.source});
   }
   
   // Vertical alignment.
-  i = layoutValues.indexOf('top') + 1 || layoutValues.indexOf('bottom') + 1 || layoutValues.indexOf('middle') + 1;
+  i = layout.values.indexOf('top') + 1 || layout.values.indexOf('bottom') + 1 || layout.values.indexOf('middle') + 1;
   if(i) {
-    layoutRule.append({prop: 'vertical-align', value: layoutValues[i - 1], source: decl.source});
+    layout.childrenRule.append({prop: 'vertical-align', value: layout.values[i - 1], source: decl.source});
   }
 
   // Remove the 'layout' property from the result.
@@ -219,13 +219,13 @@ function lineLayout(css, rule, decl, layoutValues, layoutRule, layoutPseudo) {
   return;
 }
 
-function columnLayout(css, rule, decl, layoutValues, layoutRule, layoutPseudo) {
-  css.insertAfter(rule, layoutRule);
+function columnLayout(css, rule, decl, layout) {
+  css.insertAfter(rule, layout.childrenRule);
 
   rule.insertAfter(decl, {prop: 'display', value: 'table', source: decl.source});
   rule.insertAfter(decl, {prop: 'table-layout', value: 'fixed', source: decl.source});
   rule.insertAfter(decl, {prop: 'width', value: '100%', source: decl.source});
-  layoutRule.append({prop: 'display', value: 'table-cell'});
+  layout.childrenRule.append({prop: 'display', value: 'table-cell'});
 
   // Remove the 'layout' property from the result.
   decl.remove();
@@ -233,13 +233,13 @@ function columnLayout(css, rule, decl, layoutValues, layoutRule, layoutPseudo) {
   return;
 }
 
-function rowLayout(css, rule, decl, layoutValues, layoutRule, layoutPseudo) {
-  css.insertAfter(rule, layoutRule);
+function rowLayout(css, rule, decl, layout) {
+  css.insertAfter(rule, layout.childrenRule);
 
   rule.insertAfter(decl, {prop: 'display', value: 'table', source: decl.source});
   rule.insertAfter(decl, {prop: 'table-layout', value: 'fixed', source: decl.source});
   rule.insertAfter(decl, {prop: 'width', value: '100%', source: decl.source});
-  layoutRule.append({prop: 'display', value: 'table-row'});
+  layout.childrenRule.append({prop: 'display', value: 'table-row'});
 
   // Remove the 'layout' property from the result.
   decl.remove();
