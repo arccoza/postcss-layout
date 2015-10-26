@@ -29,8 +29,19 @@ it won't expand to fill its parent, instead make its width as small as possible 
 
 **Example**
 ```css
+/* Input. */
 .container {
   layout: stack right shrink;
+}
+
+/* Output */
+.container {
+  box-sizing: border-box;
+}
+.container > * {
+  box-sizing: border-box;
+  display: table;
+  margin-left: auto;
 }
 ```
 
@@ -47,8 +58,29 @@ Child elements in a `layout: lines' container can wrap when they are longer than
 
 **Example**
 ```css
+/* Input. */
 .container {
   layout: lines bottom center;
+}
+
+/* Output. */
+.container {
+  text-align: center;
+  box-sizing: border-box;
+}
+.container > * {
+  box-sizing: border-box;
+  display: inline-block;
+  text-align: initial;
+  vertical-align: bottom;
+}
+.container:before {
+  position: relative;
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 100%;
+  vertical-align: middle;
 }
 ```
 
@@ -62,6 +94,26 @@ Child elements in a `layout: lines' container can wrap when they are longer than
 Creates horizontally arranged child elements that stretch in columns from the top to the bottom 
 of the selected container elements, and horizontally fill their container.
 *NOTE* the `.container` will have a width set of `100%` by default.
+
+**Example**
+```css
+/* Input. */
+.container {
+  layout: columns;
+}
+
+/* Output */
+.container {
+  width: 100%;
+  table-layout: fixed;
+  display: table;
+  box-sizing: border-box;
+}
+.container > * {
+  box-sizing: border-box;
+  display: table-cell;
+}
+```
 
 ## Grids
 
@@ -96,6 +148,7 @@ Use the `GRID_NAME-span` property in a child to define its width relative to the
 
 **Example**
 ```css
+/* Input. */
 @grid g12 {
   count: 12;
   gutter: 1em;
@@ -108,5 +161,30 @@ Use the `GRID_NAME-span` property in a child to define its width relative to the
 
 .child {
   g12-span: 4;
+}
+
+/* Output. */
+.container {
+  box-sizing: border-box;
+  margin-right: -0.5em;
+  margin-left: -0.5em;
+}
+.container > * {
+  box-sizing: border-box;
+  display: inline-block;
+  text-align: initial;
+}
+.container:before {
+  position: relative;content: "";
+  display: inline-block;
+  width: 0;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.child {
+  margin-right: 0.5em;
+  margin-left: 0.5em;
+  width: calc(33.333333333333336% - 1em);
 }
 ```

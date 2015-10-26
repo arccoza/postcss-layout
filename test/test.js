@@ -170,6 +170,9 @@ var tests = {
   ]
 }
 
+// var q = processor.process('@grid g12 {count: 12; gutter: 1em;} .container {layout: lines; grid: g12;} .child {g12-span: 4;}');
+// console.log(q.css);
+
 test('@grid rule; define a grid', function(t) {
   t.plan(2);
   var lazy = processor.process(tests['@grid'].in);

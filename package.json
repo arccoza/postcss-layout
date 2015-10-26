@@ -9,6 +9,7 @@
   "keywords": [
     "postcss",
     "plugin",
+    "postcss-plugin",
     "css",
     "layout",
     "postcss-layout"
