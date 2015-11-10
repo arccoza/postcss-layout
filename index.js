@@ -189,6 +189,7 @@ function stackLayout(css, rule, decl, layout) {
 
 function lineLayout(css, rule, decl, layout) {
   var i = null;
+  rule.insertAfter(decl, {prop: 'font-size', value: '0', source: decl.source});
   layout.pseudoRule.append({prop: 'position', value: 'relative'});
   layout.pseudoRule.append({prop: 'content', value: '""'});
   layout.pseudoRule.append({prop: 'display', value: 'inline-block'});
@@ -197,6 +198,7 @@ function lineLayout(css, rule, decl, layout) {
   layout.pseudoRule.append({prop: 'vertical-align', value: 'middle'});
   layout.childrenRule.append({prop: 'display', value: 'inline-block'});
   layout.childrenRule.append({prop:'text-align', value: 'initial'});
+  layout.childrenRule.append({prop:'font-size', value: 'initial'});
   
   css.insertAfter(rule, layout.pseudoRule);
   css.insertAfter(rule, layout.childrenRule);

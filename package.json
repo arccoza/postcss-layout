@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "gulp": "^3.9.0",
+    "gulp-postcss": "^6.0.1",
     "gulp-shell": "^0.5.0",
     "tap-spec": "^4.1.0",
     "tape": "^4.2.2"

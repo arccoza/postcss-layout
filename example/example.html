@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Post CSS Layout Example Page #1</title>
+  <meta name="description" content="Post CSS Layout example">
+  <meta name="author" content="Adrien">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="bld/css/main.css">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <script src="/static/jquery.js"></script>
+  <script src="/static/xify.pack.js"></script>
+  <script src="/static/main_global.js"></script>
+</head>
+<body>
+  <input id="stack" name="layout" value="stack" type="radio" checked>
+  <label for="stack">stack</label>
+  <input id="stack-shrink" name="layout" value="stack-shrink" type="radio">
+  <label for="stack-shrink">stack shrink</label>
+  <input id="lines" name="layout" value="lines" type="radio">
+  <label for="lines">lines</label>
+	<div id="container">
+   <div class="item">This is child #1</div>
+   <div class="item">This is child #2, it's a bit longer</div>
+   <div class="item">This is child #3, it's quite a bit longer.</div>
+   <div class="item">This is child #4</div>
+   <div class="item">This is child #1</div>
+   <div class="item">This is child #2, it's a bit longer</div>
+   <div class="item">This is child #3, it's quite a bit longer.</div>
+   <div class="item">This is child #4</div>
+  </div>
+</body>
+</html>
