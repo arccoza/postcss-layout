@@ -25,7 +25,7 @@ var tests = {
       "chk": "equal",
       "in": ".test { layout: lines; grid: g12; }",
       "out": "".concat(".test { box-sizing: border-box; margin-right: -0.5em; margin-left: -0.5em; }\n",
-        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; }\n",
+        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; font-size: initial; }\n",
         ".test:before { position: relative; content: \"\"; display: inline-block; width: 0; height: 100%; vertical-align: middle; }")
     },
     {
@@ -87,64 +87,64 @@ var tests = {
       "msg": "lines",
       "chk": "equal",
       "in": ".test { layout: lines; }",
-      "out": "".concat(".test { box-sizing: border-box; }\n",
-        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; }\n",
+      "out": "".concat(".test { font-size: 0; box-sizing: border-box; }\n",
+        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; font-size: initial; }\n",
         ".test:before { position: relative; content: \"\"; display: inline-block; width: 0; height: 100%; vertical-align: middle; }")
     },
     {
       "msg": "lines left",
       "chk": "equal",
       "in": ".test { layout: lines left; }",
-      "out": "".concat(".test { text-align: left; box-sizing: border-box; }\n",
-        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; }\n",
+      "out": "".concat(".test { text-align: left; font-size: 0; box-sizing: border-box; }\n",
+        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; font-size: initial; }\n",
         ".test:before { position: relative; content: \"\"; display: inline-block; width: 0; height: 100%; vertical-align: middle; }")
     },
     {
       "msg": "lines center",
       "chk": "equal",
       "in": ".test { layout: lines center; }",
-      "out": "".concat(".test { text-align: center; box-sizing: border-box; }\n",
-        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; }\n",
+      "out": "".concat(".test { text-align: center; font-size: 0; box-sizing: border-box; }\n",
+        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; font-size: initial; }\n",
         ".test:before { position: relative; content: \"\"; display: inline-block; width: 0; height: 100%; vertical-align: middle; }")
     },
     {
       "msg": "lines right",
       "chk": "equal",
       "in": ".test { layout: lines right; }",
-      "out": "".concat(".test { text-align: right; box-sizing: border-box; }\n",
-        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; }\n",
+      "out": "".concat(".test { text-align: right; font-size: 0; box-sizing: border-box; }\n",
+        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; font-size: initial; }\n",
         ".test:before { position: relative; content: \"\"; display: inline-block; width: 0; height: 100%; vertical-align: middle; }")
     },
     {
       "msg": "lines top",
       "chk": "equal",
       "in": ".test { layout: lines top; }",
-      "out": "".concat(".test { box-sizing: border-box; }\n",
-        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; vertical-align: top; }\n",
+      "out": "".concat(".test { font-size: 0; box-sizing: border-box; }\n",
+        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; font-size: initial; vertical-align: top; }\n",
         ".test:before { position: relative; content: \"\"; display: inline-block; width: 0; height: 100%; vertical-align: middle; }")
     },
     {
       "msg": "lines middle",
       "chk": "equal",
       "in": ".test { layout: lines middle; }",
-      "out": "".concat(".test { box-sizing: border-box; }\n",
-        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; vertical-align: middle; }\n",
+      "out": "".concat(".test { font-size: 0; box-sizing: border-box; }\n",
+        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; font-size: initial; vertical-align: middle; }\n",
         ".test:before { position: relative; content: \"\"; display: inline-block; width: 0; height: 100%; vertical-align: middle; }")
     },
     {
       "msg": "lines bottom",
       "chk": "equal",
       "in": ".test { layout: lines bottom; }",
-      "out": "".concat(".test { box-sizing: border-box; }\n",
-        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; vertical-align: bottom; }\n",
+      "out": "".concat(".test { font-size: 0; box-sizing: border-box; }\n",
+        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; font-size: initial; vertical-align: bottom; }\n",
         ".test:before { position: relative; content: \"\"; display: inline-block; width: 0; height: 100%; vertical-align: middle; }")
     },
     {
       "msg": "lines top left",
       "chk": "equal",
       "in": ".test { layout: lines top left; }",
-      "out": "".concat(".test { text-align: left; box-sizing: border-box; }\n",
-        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; vertical-align: top; }\n",
+      "out": "".concat(".test { text-align: left; font-size: 0; box-sizing: border-box; }\n",
+        ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; font-size: initial; vertical-align: top; }\n",
         ".test:before { position: relative; content: \"\"; display: inline-block; width: 0; height: 100%; vertical-align: middle; }")
     },
     {
