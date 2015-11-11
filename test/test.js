@@ -24,7 +24,7 @@ var tests = {
       "msg": "use grid",
       "chk": "equal",
       "in": ".test { layout: lines; grid: g12; }",
-      "out": "".concat(".test { box-sizing: border-box; margin-right: -0.5em; margin-left: -0.5em; }\n",
+      "out": "".concat(".test { font-size: 0; box-sizing: border-box; margin-right: -0.5em; margin-left: -0.5em; }\n",
         ".test > * { box-sizing: border-box; display: inline-block; text-align: initial; font-size: initial; }\n",
         ".test:before { position: relative; content: \"\"; display: inline-block; width: 0; height: 100%; vertical-align: middle; }")
     },

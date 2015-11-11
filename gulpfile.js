@@ -17,7 +17,7 @@ gulp.task('example', function() {
 });
 
 gulp.task('test', shell.task([
-  'node test/*.js',
+  'node test/test.js',
 ]));
 
 gulp.task('default', ['test']);
