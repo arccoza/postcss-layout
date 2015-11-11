@@ -52,9 +52,11 @@ it won't expand to fill its parent, instead make its width as small as possible 
 }
 ```
 
-Creates horizontally arranged child elements in the container elements selected by the rule.
+Creates horizontally arranged child elements in the container, using `display:inline-block`.
 There are optional horizontal and vertical alignment property values.
-Child elements in a `layout: lines' container can wrap when they are longer than the container width.
+Child elements in a `layout: lines` container can wrap when they are longer than the container width.
+This layout sets `font-size:0` on the container to remove whitespace, then sets `font-size:initial` on 
+child elements to reset `font-size`. Be aware of this as your font sizes may not be what you expect.
 
 **Example**
 ```css
