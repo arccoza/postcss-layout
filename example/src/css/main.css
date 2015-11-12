@@ -1,3 +1,8 @@
+@grid g12 {
+	count: 12;
+	gutter: 10px;
+}
+
 body {
 	background-color: #190800;
 	padding: 0;
@@ -6,26 +11,75 @@ body {
 	font-family: sans-serif;
 }
 
-body > input#stack:checked ~ #container {
+body > input#stack:checked ~ #container > .inner {
 	layout: stack;
 }
 
-body > input#stack-shrink:checked ~ #container {
+body > input#stack-shrink:checked ~ #container > .inner {
 	layout: stack shrink;	
 }
 
-body > input#lines:checked ~ #container {
+body > input#stack-right-shrink:checked ~ #container > .inner {
+	layout: stack right shrink;	
+}
+
+body > input#lines:checked ~ #container > .inner {
 	layout: lines;	
 }
 
+body > input#lines-center-middle:checked ~ #container > .inner {
+	layout: lines center;	
+}
+body > input#lines-center-middle:checked ~ #container {
+	layout: lines middle;	
+}
+
+body > input#lines-bottom-right:checked ~ #container > .inner {
+	layout: lines right;	
+}
+body > input#lines-bottom-right:checked ~ #container {
+	layout: lines bottom;	
+}
+
+body > input#columns:checked ~ #container > .inner {
+	layout: columns;
+	height: 100%;
+}
+
+body > input#rows:checked ~ #container > .inner {
+	layout: rows;	
+	height: 100%;
+}
+
+body > input#grid:checked ~ #container > .inner {
+	grid: g12;
+}
+
 #container {
-	/*layout: stack shrink;*/
+	height: 350px;
+	outline: 1px dashed #333;
+}
+#container > .inner {
+	/*height: 100%;*/
 }
 
 .item {
 	position: relative;
 	min-height: 150px;
 	padding: 2em;
+}
+
+body > input#grid:checked ~ #container .item:nth-child(4n+1) {
+	g12-span: 3;
+}
+body > input#grid:checked ~ #container .item:nth-child(4n+2) {
+	g12-span: 5;
+}
+body > input#grid:checked ~ #container .item:nth-child(4n+3) {
+	g12-span: 4;
+}
+body > input#grid:checked ~ #container .item:nth-child(4n+4) {
+	g12-span: 3;
 }
 
 .item:nth-child(4n+1) {

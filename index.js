@@ -1,6 +1,31 @@
 var postcss = require('postcss');
 
 
+// Default properties for all layouts.
+var defaults = {};
+defaults.container = {
+  "box-sizing": "border-box",
+  "margin-left": "0",
+  "margin-right": "0",
+  "text-align": "initial",
+  "font-size": "initial"
+}
+
+defaults.item = {
+  "box-sizing": "border-box",
+  "display": "initial",
+  "text-align": "initial",
+  "vertical-align": "initial",
+  "white-space": "initial",
+  "font-size": "initial"
+}
+
+defaults.pseudo = {
+  "position": "relative",
+  "display": "none",
+  "content": "normal"
+}
+
 module.exports = postcss.plugin('postcss-layout', function (opts) {
   opts = opts || {};
   // Attach the grids to the opts object if passed in,
@@ -9,6 +34,8 @@ module.exports = postcss.plugin('postcss-layout', function (opts) {
   var grids = opts._grids;
   
   return function (css, result) {
+    // css.prepend({selector:'a', nodes: [{prop:'display', value:'none'}]});
+    // css.prepend(objToRule(defaults.item));
     css
       .walkAtRules('grid', function(rule) {
         // Collect grid definitions.
@@ -25,8 +52,8 @@ module.exports = postcss.plugin('postcss-layout', function (opts) {
 
         if(layout.isSet) {
           // Make sure layouts use 'box-sizing: border-box;' for best results.
-          rule.insertAfter(layout.decl, {prop: 'box-sizing', value: 'border-box', source: layout.decl.source});
-          layout.childrenRule.append({prop: 'box-sizing', value: 'border-box'});
+          // rule.insertAfter(layout.decl, {prop: 'box-sizing', value: 'border-box', source: layout.decl.source});
+          // layout.childrenRule.append({prop: 'box-sizing', value: 'border-box'});
 
           // Stack layout.
           if(layout.values.indexOf('stack') + 1) {
@@ -36,9 +63,9 @@ module.exports = postcss.plugin('postcss-layout', function (opts) {
           else if(layout.values.indexOf('lines') + 1) {
             lineLayout(css, rule, layout.decl, layout);
 
-            if(layout.isGridContainer) {
-              gridContainer(css, rule, layout.gridContainerDecl, layout.grid);
-            }
+            // if(layout.isGridContainer) {
+            //   gridContainer(css, rule, layout.gridContainerDecl, layout.grid);
+            // }
           }
           // Columns layout.
           else if(layout.values.indexOf('columns') + 1) {
@@ -53,7 +80,10 @@ module.exports = postcss.plugin('postcss-layout', function (opts) {
           }
         }
 
-        if(layout.isGridItem) {
+        if(layout.isGridContainer) {
+          gridContainer(css, rule, layout.gridContainerDecl, layout.grid);
+        }
+        else if(layout.isGridItem) {
           gridItem(css, rule, layout.gridItemDecl, layout.grid);
         }
       });
@@ -102,13 +132,17 @@ function processLayoutConf(css, result, rule, decl, grids, layout) {
     layout.childrenRule = null;
     layout.pseudoRule = null;
     layout.values = decl.value.split(/\s*,\s*|\s/);
-    // console.log(layoutValues);
+    layout.container = clone(defaults.container);
+    layout.item = clone(defaults.item);
+    layout.pseudo = clone(defaults.pseudo);
     
     for (var i = 0; i < rule.selectors.length; i++) {
       sels.push(rule.selectors[i] + ' > *');
     };
 
-    layout.childrenRule = layoutRule = postcss.rule({selector: sels.join(', '), source: decl.source});
+    layout.childrenRule = postcss.rule({selector: sels.join(', '), source: decl.source});
+    layout.item.selector = sels.join(', ');
+    layout.item.source = decl.source;
     sels = [];
 
     for (var i = 0; i < rule.selectors.length; i++) {
@@ -116,6 +150,8 @@ function processLayoutConf(css, result, rule, decl, grids, layout) {
     };
 
     layout.pseudoRule = postcss.rule({selector: sels.join(', '), source: decl.source});
+    layout.pseudo.selector = sels.join(', ');
+    layout.pseudo.source = decl.source;
 
     layout.isSet = true;
     layout.decl = decl;
@@ -155,31 +191,40 @@ function processLayoutConf(css, result, rule, decl, grids, layout) {
 }
 
 function stackLayout(css, rule, decl, layout) {
-  css.insertAfter(rule, layoutRule);
+  // css.insertAfter(rule, layout.childrenRule);
 
   // Sizing, expand-to-fill container or shrink-to-fit content (horizontally).
   if(layout.values.indexOf('shrink') + 1) {
-    layout.childrenRule.append({prop: 'display', value: 'table'});
+    // layout.childrenRule.append({prop: 'display', value: 'table'});
+    layout.item['display'] = 'table';
   }
   else {
-    layout.childrenRule.append({prop: 'display', value: 'block'});
+    // layout.childrenRule.append({prop: 'display', value: 'block'});
+    layout.item['display'] = 'block';
   }
 
   // Alignment.
   if(layout.values.indexOf('left') + 1) {
     // layout.childrenRule.append({prop: 'margin', value: '0 auto 0 0'});
-    layout.childrenRule.append({prop: 'margin-right', value: 'auto'});
+    // layout.childrenRule.append({prop: 'margin-right', value: 'auto'});
+    layout.item['margin-right'] = 'auto';
   }
   else if(layout.values.indexOf('right') + 1) {
     // layout.childrenRule.append({prop: 'margin', value: '0 0 0 auto'});
-    layout.childrenRule.append({prop: 'margin-left', value: 'auto'});
+    // layout.childrenRule.append({prop: 'margin-left', value: 'auto'});
+    layout.item['margin-left'] = 'auto';
   }
   // else if(layout.values.indexOf('center') + 1) {
   else {
     // layout.childrenRule.append({prop: 'margin', value: '0 auto'});
-    layout.childrenRule.append({prop: 'margin-left', value: 'auto'});
-    layout.childrenRule.append({prop: 'margin-right', value: 'auto'});
+    // layout.childrenRule.append({prop: 'margin-left', value: 'auto'});
+    // layout.childrenRule.append({prop: 'margin-right', value: 'auto'});
+    layout.item['margin-left'] = 'auto';
+    layout.item['margin-right'] = 'auto';
   }
+
+  objToRule(layout.container, rule);
+  css.insertAfter(rule, objToRule(layout.item));
 
   // Remove 'layout' property from result.
   decl.remove();
@@ -189,31 +234,58 @@ function stackLayout(css, rule, decl, layout) {
 
 function lineLayout(css, rule, decl, layout) {
   var i = null;
-  rule.insertAfter(decl, {prop: 'font-size', value: '0', source: decl.source});
-  layout.pseudoRule.append({prop: 'position', value: 'relative'});
-  layout.pseudoRule.append({prop: 'content', value: '""'});
-  layout.pseudoRule.append({prop: 'display', value: 'inline-block'});
-  layout.pseudoRule.append({prop: 'width', value: '0'});
-  layout.pseudoRule.append({prop: 'height', value: '100%'});
-  layout.pseudoRule.append({prop: 'vertical-align', value: 'middle'});
-  layout.childrenRule.append({prop: 'display', value: 'inline-block'});
-  layout.childrenRule.append({prop:'text-align', value: 'initial'});
-  layout.childrenRule.append({prop:'font-size', value: 'initial'});
+  layout.container['font-size'] = '0';
   
-  css.insertAfter(rule, layout.pseudoRule);
-  css.insertAfter(rule, layout.childrenRule);
+  // rule.insertAfter(decl, {prop: 'font-size', value: '0', source: decl.source});
+  // layout.pseudoRule.append({prop: 'position', value: 'relative'});
+  // layout.pseudoRule.append({prop: 'content', value: '""'});
+  // layout.pseudoRule.append({prop: 'display', value: 'inline-block'});
+  // layout.pseudoRule.append({prop: 'width', value: '0'});
+  // layout.pseudoRule.append({prop: 'height', value: '100%'});
+  // layout.pseudoRule.append({prop: 'vertical-align', value: 'middle'});
+  // layout.childrenRule.append({prop: 'display', value: 'inline-block'});
+  // layout.childrenRule.append({prop:'text-align', value: 'initial'});
+  // layout.childrenRule.append({prop: 'vertical-align', value: 'top'});
+  // layout.childrenRule.append({prop: 'white-space', value: 'initial'});
+  // layout.childrenRule.append({prop:'font-size', value: 'initial'});
+  
+  // css.insertAfter(rule, layout.pseudoRule);
+  // css.insertAfter(rule, layout.childrenRule);
+
+  layout.item.source = decl.source;
+  layout.item['display'] = 'inline-block';
+  layout.item['vertical-align'] = 'top';
   
   // Horizontal alignment.
   i = layout.values.indexOf('left') + 1 || layout.values.indexOf('right') + 1 || layout.values.indexOf('center') + 1;
   if(i) {
-    rule.insertAfter(decl, {prop: 'text-align', value: layout.values[i - 1], source: decl.source});
+    // rule.insertAfter(decl, {prop: 'text-align', value: layout.values[i - 1], source: decl.source});
+    layout.container['text-align'] = layout.values[i - 1];
   }
   
   // Vertical alignment.
   i = layout.values.indexOf('top') + 1 || layout.values.indexOf('bottom') + 1 || layout.values.indexOf('middle') + 1;
   if(i) {
-    layout.childrenRule.append({prop: 'vertical-align', value: layout.values[i - 1], source: decl.source});
+    // layout.childrenRule.append({prop: 'vertical-align', value: layout.values[i - 1], source: decl.source});
+    // rule.insertAfter(decl, {prop: 'white-space', value: 'nowrap', source: decl.source});
+
+    layout.container['white-space'] = 'nowrap';
+    layout.item['vertical-align'] = layout.values[i - 1];
+    layout.pseudo['content'] = '""';
+    layout.pseudo['display'] = 'inline-block';
+    layout.pseudo['vertical-align'] = 'middle';
+    layout.pseudo['width'] = '0';
+    layout.pseudo['height'] = '100%';
   }
+
+  i = layout.values.indexOf('nowrap') + 1;
+  if(i) {
+    layout.container['white-space'] = 'nowrap';
+  }
+
+  objToRule(layout.container, rule);
+  css.insertAfter(rule, objToRule(layout.pseudo));
+  css.insertAfter(rule, objToRule(layout.item));
 
   // Remove the 'layout' property from the result.
   decl.remove();
@@ -222,12 +294,17 @@ function lineLayout(css, rule, decl, layout) {
 }
 
 function columnLayout(css, rule, decl, layout) {
-  css.insertAfter(rule, layout.childrenRule);
+  // css.insertAfter(rule, layout.childrenRule);
 
+  objToRule(layout.container, rule);
   rule.insertAfter(decl, {prop: 'display', value: 'table', source: decl.source});
   rule.insertAfter(decl, {prop: 'table-layout', value: 'fixed', source: decl.source});
   rule.insertAfter(decl, {prop: 'width', value: '100%', source: decl.source});
-  layout.childrenRule.append({prop: 'display', value: 'table-cell'});
+  // layout.childrenRule.append({prop: 'display', value: 'table-cell'});
+
+  layout.item['display'] = 'table-cell';
+
+  css.insertAfter(rule, objToRule(layout.item));
 
   // Remove the 'layout' property from the result.
   decl.remove();
@@ -236,12 +313,17 @@ function columnLayout(css, rule, decl, layout) {
 }
 
 function rowLayout(css, rule, decl, layout) {
-  css.insertAfter(rule, layout.childrenRule);
+  // css.insertAfter(rule, layout.childrenRule);
 
+  objToRule(layout.container, rule);
   rule.insertAfter(decl, {prop: 'display', value: 'table', source: decl.source});
   rule.insertAfter(decl, {prop: 'table-layout', value: 'fixed', source: decl.source});
   rule.insertAfter(decl, {prop: 'width', value: '100%', source: decl.source});
-  layout.childrenRule.append({prop: 'display', value: 'table-row'});
+  // layout.childrenRule.append({prop: 'display', value: 'table-row'});
+
+  layout.item['display'] = 'table-row';
+
+  css.insertAfter(rule, objToRule(layout.item));
 
   // Remove the 'layout' property from the result.
   decl.remove();
@@ -300,4 +382,46 @@ function gridItem(css, rule, decl, grid) {
   decl.remove();
 
   return;
+}
+
+// Convert a js obj to a postcss rule, extending clonedRule if it is passed in.
+function objToRule(obj, clonedRule) {
+  var rule = clonedRule || postcss.rule();
+  var skipKeys = ['selector', 'selectors', 'source'];
+
+  if(obj.selector)
+    rule.selector = obj.selector;
+  else if(obj.selectors)
+    rule.selectors = obj.selectors;
+
+  if(obj.source)
+    rule.source = obj.source;
+
+  for(var k in obj) {
+    if(obj.hasOwnProperty(k) && !(skipKeys.indexOf(k) + 1)) {
+      var v = obj[k];
+      var found = false;
+
+      // If clonedRule was passed in, check for an existing property.
+      if(clonedRule) {
+        rule.each(function(decl) {
+          if(decl.prop == k) {
+            decl.value = v;
+            found = true;
+            return false;
+          }
+        });
+      }
+      
+      // If no clonedRule or there was no existing prop.
+      if(!clonedRule || !found)
+        rule.append({prop: k, value: v});
+    }
+  }
+
+  return rule;
+}
+
+function clone(obj) {
+  return JSON.parse(JSON.stringify(obj));
 }
