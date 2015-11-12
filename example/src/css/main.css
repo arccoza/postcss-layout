@@ -31,14 +31,14 @@ body > input#lines-center-middle:checked ~ #container > .inner {
 	layout: lines center;	
 }
 body > input#lines-center-middle:checked ~ #container {
-	layout: lines middle;	
+	layout: lines center middle;	
 }
 
 body > input#lines-bottom-right:checked ~ #container > .inner {
 	layout: lines right;	
 }
 body > input#lines-bottom-right:checked ~ #container {
-	layout: lines bottom;	
+	layout: lines bottom right;	
 }
 
 body > input#flow:checked ~ #container > .inner {

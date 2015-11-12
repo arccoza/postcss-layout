@@ -113,7 +113,7 @@ body > input#lines-center-middle:checked ~ #container {
 	box-sizing: border-box;
 	margin-left: 0;
 	margin-right: 0;
-	text-align: initial;
+	text-align: center;
 	font-size: 0;
 	white-space: nowrap;	
 }
@@ -162,7 +162,7 @@ body > input#lines-bottom-right:checked ~ #container {
 	box-sizing: border-box;
 	margin-left: 0;
 	margin-right: 0;
-	text-align: initial;
+	text-align: right;
 	font-size: 0;
 	white-space: nowrap;	
 }
