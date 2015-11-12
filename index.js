@@ -23,7 +23,8 @@ defaults.item = {
 defaults.pseudo = {
   "position": "relative",
   "display": "none",
-  "content": "normal"
+  "content": "normal",
+  "clear": "none"
 }
 
 module.exports = postcss.plugin('postcss-layout', function (opts) {
@@ -66,6 +67,9 @@ module.exports = postcss.plugin('postcss-layout', function (opts) {
             // if(layout.isGridContainer) {
             //   gridContainer(css, rule, layout.gridContainerDecl, layout.grid);
             // }
+          }
+          else if(layout.values.indexOf('flow') + 1) {
+            flowLayout(css, rule, layout.decl, layout);
           }
           // Columns layout.
           else if(layout.values.indexOf('columns') + 1) {
@@ -146,7 +150,7 @@ function processLayoutConf(css, result, rule, decl, grids, layout) {
     sels = [];
 
     for (var i = 0; i < rule.selectors.length; i++) {
-      sels.push(rule.selectors[i] + ':before');
+      sels.push(rule.selectors[i] + ':after');
     };
 
     layout.pseudoRule = postcss.rule({selector: sels.join(', '), source: decl.source});
@@ -281,6 +285,31 @@ function lineLayout(css, rule, decl, layout) {
   i = layout.values.indexOf('nowrap') + 1;
   if(i) {
     layout.container['white-space'] = 'nowrap';
+  }
+
+  objToRule(layout.container, rule);
+  css.insertAfter(rule, objToRule(layout.pseudo));
+  css.insertAfter(rule, objToRule(layout.item));
+
+  // Remove the 'layout' property from the result.
+  decl.remove();
+  
+  return;
+}
+
+function flowLayout(css, rule, decl, layout) {
+  var i = null;
+
+  layout.item.source = decl.source;
+  layout.item['float'] = 'left';
+  layout.pseudo['content'] ='""';
+  layout.pseudo['display'] = 'table';
+  layout.pseudo['clear'] = 'both';
+  
+  // Horizontal alignment.
+  i = layout.values.indexOf('left') + 1 || layout.values.indexOf('right') + 1;
+  if(i) {
+    layout.item['float'] = layout.values[i - 1];
   }
 
   objToRule(layout.container, rule);

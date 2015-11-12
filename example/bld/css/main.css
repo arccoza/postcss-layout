@@ -79,10 +79,11 @@ body > input#lines:checked ~ #container > .inner > * {
 	font-size: initial;
 }
 
-body > input#lines:checked ~ #container > .inner:before {
+body > input#lines:checked ~ #container > .inner:after {
 	position: relative;
 	display: none;
 	content: normal;
+	clear: none;
 }
 
 body > input#lines-center-middle:checked ~ #container > .inner {
@@ -102,10 +103,11 @@ body > input#lines-center-middle:checked ~ #container > .inner > * {
 	font-size: initial;
 }
 
-body > input#lines-center-middle:checked ~ #container > .inner:before {
+body > input#lines-center-middle:checked ~ #container > .inner:after {
 	position: relative;
 	display: none;
 	content: normal;
+	clear: none;
 }
 body > input#lines-center-middle:checked ~ #container {
 	box-sizing: border-box;
@@ -123,10 +125,11 @@ body > input#lines-center-middle:checked ~ #container > * {
 	white-space: initial;
 	font-size: initial;
 }
-body > input#lines-center-middle:checked ~ #container:before {
+body > input#lines-center-middle:checked ~ #container:after {
 	position: relative;
 	display: inline-block;
 	content: "";
+	clear: none;
 	vertical-align: middle;
 	width: 0;
 	height: 100%;
@@ -149,10 +152,11 @@ body > input#lines-bottom-right:checked ~ #container > .inner > * {
 	font-size: initial;
 }
 
-body > input#lines-bottom-right:checked ~ #container > .inner:before {
+body > input#lines-bottom-right:checked ~ #container > .inner:after {
 	position: relative;
 	display: none;
 	content: normal;
+	clear: none;
 }
 body > input#lines-bottom-right:checked ~ #container {
 	box-sizing: border-box;
@@ -170,13 +174,64 @@ body > input#lines-bottom-right:checked ~ #container > * {
 	white-space: initial;
 	font-size: initial;
 }
-body > input#lines-bottom-right:checked ~ #container:before {
+body > input#lines-bottom-right:checked ~ #container:after {
 	position: relative;
 	display: inline-block;
 	content: "";
+	clear: none;
 	vertical-align: middle;
 	width: 0;
 	height: 100%;
+}
+
+body > input#flow:checked ~ #container > .inner {
+	box-sizing: border-box;
+	margin-left: 0;
+	margin-right: 0;
+	text-align: initial;
+	font-size: initial;	
+}
+
+body > input#flow:checked ~ #container > .inner > * {
+	box-sizing: border-box;
+	display: initial;
+	text-align: initial;
+	vertical-align: initial;
+	white-space: initial;
+	font-size: initial;
+	float: left;
+}
+
+body > input#flow:checked ~ #container > .inner:after {
+	position: relative;
+	display: table;
+	content: "";
+	clear: both;
+}
+
+body > input#flow-right:checked ~ #container > .inner {
+	box-sizing: border-box;
+	margin-left: 0;
+	margin-right: 0;
+	text-align: initial;
+	font-size: initial;	
+}
+
+body > input#flow-right:checked ~ #container > .inner > * {
+	box-sizing: border-box;
+	display: initial;
+	text-align: initial;
+	vertical-align: initial;
+	white-space: initial;
+	font-size: initial;
+	float: right;
+}
+
+body > input#flow-right:checked ~ #container > .inner:after {
+	position: relative;
+	display: table;
+	content: "";
+	clear: both;
 }
 
 body > input#columns:checked ~ #container > .inner {

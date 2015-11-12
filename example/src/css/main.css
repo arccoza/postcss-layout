@@ -41,6 +41,14 @@ body > input#lines-bottom-right:checked ~ #container {
 	layout: lines bottom;	
 }
 
+body > input#flow:checked ~ #container > .inner {
+	layout: flow;	
+}
+
+body > input#flow-right:checked ~ #container > .inner {
+	layout: flow right;	
+}
+
 body > input#columns:checked ~ #container > .inner {
 	layout: columns;
 	height: 100%;
