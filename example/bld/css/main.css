@@ -1,10 +1,44 @@
 body {
 	background-color: #190800;
 	padding: 0;
-	margin: 20px;
+	margin: 40px 20px 20px 20px;
 	color: #fff;
 	font-family: sans-serif;
 }
+
+/*body > input, body > label {
+	position: relative;
+	display: inline-block;
+	background-color: #912e00;
+	padding: 2px 3px;
+	margin-bottom: 2px;
+}*/
+
+body > label {
+	margin-right: 0.5em;
+	vertical-align: middle;
+}
+/*body > label:before {
+	position: relative;
+	width: 1em;
+	height: 1em;
+	content: "";
+	background-color: #772500;
+	display: inline-block;
+	margin-right: 0.2em;
+	border-radius: 100px;
+	vertical-align: middle;
+}*/
+body > input:checked + label:before {
+	background-color: #000;
+}
+
+/*body > input {
+	margin-right: -20px;
+	padding: 0;
+	z-index: 2;
+	visibility: hidden;
+}*/
 
 body > input#stack:checked ~ #container > .inner {
 	box-sizing: border-box;
