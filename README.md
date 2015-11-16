@@ -1,8 +1,9 @@
 # postcss-layout [![Travis Build Status][travis-img]][travis]
 [travis]:       https://travis-ci.org/arccoza/postcss-layout
 [travis-img]:   https://img.shields.io/travis/arccoza/postcss-layout.svg
+[demo]:         http://arccoza.github.io/postcss-layout/
 
-A PostCSS plugin for some common CSS layout patterns and a Grid system.
+A PostCSS plugin for some common CSS layout patterns and a Grid system. [Demo][demo]
 
 The plugin provides three new properties and one @rule.
 
@@ -11,9 +12,14 @@ The plugin provides three new properties and one @rule.
 * The `grid` property in a rule gives the selected elements a grid defined in `@grid`.
 * The `[gridname]-span` property in a rule defines the width of child elements in a grid container.
 
-The plugin uses CSS `calc` in places. Layouts have been tested to work in ie9+.
+The plugin uses CSS `calc` for the grid system. Layouts have been tested to work in ie9+.
+
+See the [demo][demo] or the example in the `example/` directory for usage.
 
 All layout elements are given `box-sizing: border-box;` by default.
+
+## Install
+`npm install postcss-layout --save-dev`
 
 ## Layouts
 ### stack
