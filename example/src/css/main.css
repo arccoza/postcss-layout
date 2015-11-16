@@ -97,6 +97,10 @@ body > input#grid:checked ~ #container > .inner {
 	grid: g12;
 }
 
+body > input#grid:disabled + label {
+	color: #aaa;
+}
+
 #container {
 	height: 350px;
 	outline: 1px dashed #333;
