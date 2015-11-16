@@ -21,6 +21,17 @@ All layout elements are given `box-sizing: border-box;` by default.
 ## Install
 `npm install postcss-layout --save-dev`
 
+## Tips
+
+It is recommended to use the following HTML element arrangment for your layouts, for the most flexible approach:
+
+`<div class="wrapper"> <div class="container"> <div class="item"></div> </div> </div>`
+
+or as I like to do it:
+
+`<div class="container"> <div class="inner"> <div class="item"></div> </div> </div>`
+
+
 ## Layouts
 ### stack
 ```css
@@ -98,13 +109,58 @@ deal with whitespace.
   vertical-align: bottom;
   font-size: initial;
 }
-.container:before {
+.container:after {
   position: relative;
   content: "";
   display: inline-block;
   width: 0;
   height: 100%;
   vertical-align: middle;
+}
+```
+
+### flow
+```css
+.container {
+  layout: flow [left|right];
+}
+```
+
+Creates horizontally arranged child elements(items) in the container, using `float:left` by default.
+There are optional horizontal arrangement property values.
+Child elements in a `layout: flow` container will wrap when they are longer than the container width. 
+This layout uses a pseudo element clear-fix technique.
+
+#### Caveats
+Using `left` or `right` options will align items left or right and also reverse item arrangement because 
+floats are being used to create the layout.
+
+#### Example
+```css
+/* Input. */
+.container {
+  layout: flow right;
+}
+
+/* Output. */
+.container {
+  text-align: initial;
+  box-sizing: border-box;
+  font-size: initial;
+}
+.container > * {
+  box-sizing: border-box;
+  display: initial;
+  float: right;
+  text-align: initial;
+  vertical-align: initial;
+  font-size: initial;
+}
+.container:after {
+  position: relative;
+  content: "";
+  display: table;
+  clear: both;
 }
 ```
 
@@ -120,7 +176,7 @@ that stretch in columns from the top to the bottom of the selected container ele
 and horizontally fill their container.
 *NOTE* the `.container` will have a width set of `100%` by default.
 
-**Example**
+#### Example
 ```css
 /* Input. */
 .container {
@@ -152,7 +208,7 @@ that stretch in rows from the left to the right of the selected container elemen
 and vertically fill their container.
 *NOTE* the `.container` will have a width set of `100%` by default.
 
-**Example**
+#### Example
 ```css
 /* Input. */
 .container {
