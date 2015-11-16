@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Post CSS Layout Example Page #1</title>
+  <meta name="description" content="Post CSS Layout example">
+  <meta name="author" content="Adrien">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="bld/css/main.css">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <script src="/static/jquery.js"></script>
+  <script src="/static/xify.pack.js"></script>
+  <script src="/static/main_global.js"></script>
+</head>
+<body>
+  <a href="https://github.com/arccoza/postcss-layout"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"></a>
+  <h1>postcss-layout</h1>
+  <small>A PostCSS plugin for some common CSS layout patterns and a Grid system.</small><br><br>
+  <div>layout:</div>
+  <input id="stack" name="layout" value="stack" type="radio" checked>
+  <label for="stack">stack</label>
+  <input id="stack-shrink" name="layout" value="stack-shrink" type="radio">
+  <label for="stack-shrink">stack shrink</label>
+  <input id="stack-right-shrink" name="layout" value="stack-right-shrink" type="radio">
+  <label for="stack-right-shrink">stack right shrink</label>
+  <input id="lines" name="layout" value="lines" type="radio">
+  <label for="lines">lines</label>
+  <input id="lines-center-middle" name="layout" value="lines-center-middle" type="radio">
+  <label for="lines-center-middle">lines center middle</label>
+  <input id="lines-bottom-right" name="layout" value="lines-bottom-right" type="radio">
+  <label for="lines-bottom-right">lines bottom right</label>
+  <input id="flow" name="layout" value="flow" type="radio">
+  <label for="flow">flow</label>
+  <input id="flow-right" name="layout" value="flow-right" type="radio">
+  <label for="flow-right">flow right</label>
+  <input id="columns" name="layout" value="columns" type="radio">
+  <label for="columns">columns</label>
+  <input id="rows" name="layout" value="rows" type="radio">
+  <label for="rows">rows</label>
+  <input id="grid" name="grid" value="grid" type="checkbox">
+  <label for="grid">grid</label>
+	<div id="container">
+    <div class="inner">
+      <div class="item">(span 3) This is child #1</div>
+      <div class="item">(span 5) This is child #2, it's a bit longer</div>
+      <div class="item">(span 4) This is child #3, it's quite a bit longer.</div>
+      <div class="item">(span 3) This is child #4</div>
+    </div>
+  </div>
+</body>
+</html>
