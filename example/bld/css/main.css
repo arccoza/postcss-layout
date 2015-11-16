@@ -315,6 +315,10 @@ body > input#grid:checked ~ #container > .inner {
 	margin-left: -5px;
 }
 
+body > input#grid:disabled + label {
+	color: #aaa;
+}
+
 #container {
 	height: 350px;
 	outline: 1px dashed #333;
