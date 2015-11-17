@@ -31,6 +31,8 @@ or as I like to do it:
 
 `<div class="container"> <div class="inner"> <div class="item"></div> </div> </div>`
 
+You will quickly bulk up your final CSS file if you use the `layout` property everywhere you want a layout. 
+Preferably, create a few reusable layout classes with `layout`, and apply them to your elements.
 
 ## Layouts
 ### stack
