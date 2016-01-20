@@ -174,6 +174,13 @@ var tests = {
 // console.log(q.css);
 
 test('@grid rule; define a grid', function(t) {
+  // var in = {};
+  // var in.pro = postcss([plugin()]);
+
+  // in.lazy = in.pro.process(tests['@grid'].in);
+  // in.css = lazy.css;
+  
+
   t.plan(2);
   var lazy = processor.process(tests['@grid'].in);
   var css = lazy.css;

@@ -361,21 +361,21 @@ function rowLayout(css, rule, decl, layout) {
 }
 
 function gridContainer(css, rule, decl, grid) {
-  var gutterH = grid.gutterH ? grid.gutterH.match(/(\d+)(\D*)/) : [0, 0];
+  var gutterH = grid.gutterH ? grid.gutterH.match(/(\d+\.?\d*)(\D*)/) : [0, 0];
   var gutterHUnits = gutterH[2] || '';
   var marginH = Number(gutterH[1]) ? '-' + gutterH[1]/2 + gutterHUnits : 0;
 
-  var gutterV = grid.gutterV ? grid.gutterV.match(/(\d+)(\D*)/) : [0, 0];
+  var gutterV = grid.gutterV ? grid.gutterV.match(/(\d+\.?\d*)(\D*)/) : [0, 0];
   var gutterVUnits = gutterV[2] || '';
   var marginV = Number(gutterV[1]) ? '-' + gutterV[1]/2 + gutterVUnits : 0;
 
   if(marginH) {
-    rule.insertAfter(decl, {prop:'margin-left', value: marginH, source: decl.source});
-    rule.insertAfter(decl, {prop:'margin-right', value: marginH, source: decl.source});
+    rule.insertAfter(decl, {prop:'margin-left', value: marginH + ' !important', source: decl.source});
+    rule.insertAfter(decl, {prop:'margin-right', value: marginH + ' !important', source: decl.source});
   }
   if(marginV) {
-    rule.insertAfter(decl, {prop:'margin-top', value: marginV, source: decl.source});
-    rule.insertAfter(decl, {prop:'margin-bottom', value: marginV, source: decl.source});
+    rule.insertAfter(decl, {prop:'margin-top', value: marginV + ' !important', source: decl.source});
+    rule.insertAfter(decl, {prop:'margin-bottom', value: marginV + ' !important', source: decl.source});
   }
 
   // Remove 'grid' property.
@@ -383,11 +383,11 @@ function gridContainer(css, rule, decl, grid) {
 }
 
 function gridItem(css, rule, decl, grid) {
-  var gutterH = grid.gutterH ? grid.gutterH.match(/(\d+)(\D*)/) : [0, 0];
+  var gutterH = grid.gutterH ? grid.gutterH.match(/(\d+\.?\d*)(\D*)/) : [0, 0];
   var gutterHUnits = gutterH[2] || '';
   var marginH = Number(gutterH[1]) ? gutterH[1]/2 + gutterHUnits : 0;
 
-  var gutterV = grid.gutterV ? grid.gutterV.match(/(\d+)(\D*)/) : [0, 0];
+  var gutterV = grid.gutterV ? grid.gutterV.match(/(\d+\.?\d*)(\D*)/) : [0, 0];
   var gutterVUnits = gutterV[2] || '';
   var marginV = Number(gutterV[1]) ? gutterV[1]/2 + gutterVUnits : 0;
 
