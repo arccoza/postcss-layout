@@ -196,6 +196,7 @@ function processLayoutConf(css, result, rule, decl, grids, layout) {
 
 function stackLayout(css, rule, decl, layout) {
   // css.insertAfter(rule, layout.childrenRule);
+  var parent = rule.parent;
 
   // Sizing, expand-to-fill container or shrink-to-fit content (horizontally).
   if(layout.values.indexOf('shrink') + 1) {
@@ -228,7 +229,7 @@ function stackLayout(css, rule, decl, layout) {
   }
 
   objToRule(layout.container, rule);
-  css.insertAfter(rule, objToRule(layout.item));
+  parent.insertAfter(rule, objToRule(layout.item));
 
   // Remove 'layout' property from result.
   decl.remove();
@@ -238,6 +239,7 @@ function stackLayout(css, rule, decl, layout) {
 
 function lineLayout(css, rule, decl, layout) {
   var i = null;
+  var parent = rule.parent;
   layout.container['font-size'] = '0';
   
   // rule.insertAfter(decl, {prop: 'font-size', value: '0', source: decl.source});
@@ -288,8 +290,8 @@ function lineLayout(css, rule, decl, layout) {
   }
 
   objToRule(layout.container, rule);
-  css.insertAfter(rule, objToRule(layout.pseudo));
-  css.insertAfter(rule, objToRule(layout.item));
+  parent.insertAfter(rule, objToRule(layout.pseudo));
+  parent.insertAfter(rule, objToRule(layout.item));
 
   // Remove the 'layout' property from the result.
   decl.remove();
@@ -299,6 +301,7 @@ function lineLayout(css, rule, decl, layout) {
 
 function flowLayout(css, rule, decl, layout) {
   var i = null;
+  var parent = rule.parent;
 
   layout.item.source = decl.source;
   layout.item['float'] = 'left';
@@ -313,8 +316,8 @@ function flowLayout(css, rule, decl, layout) {
   }
 
   objToRule(layout.container, rule);
-  css.insertAfter(rule, objToRule(layout.pseudo));
-  css.insertAfter(rule, objToRule(layout.item));
+  parent.insertAfter(rule, objToRule(layout.pseudo));
+  parent.insertAfter(rule, objToRule(layout.item));
 
   // Remove the 'layout' property from the result.
   decl.remove();
@@ -324,6 +327,7 @@ function flowLayout(css, rule, decl, layout) {
 
 function columnLayout(css, rule, decl, layout) {
   // css.insertAfter(rule, layout.childrenRule);
+  var parent = rule.parent;
 
   objToRule(layout.container, rule);
   rule.insertAfter(decl, {prop: 'display', value: 'table', source: decl.source});
@@ -333,7 +337,7 @@ function columnLayout(css, rule, decl, layout) {
 
   layout.item['display'] = 'table-cell';
 
-  css.insertAfter(rule, objToRule(layout.item));
+  parent.insertAfter(rule, objToRule(layout.item));
 
   // Remove the 'layout' property from the result.
   decl.remove();
@@ -343,6 +347,7 @@ function columnLayout(css, rule, decl, layout) {
 
 function rowLayout(css, rule, decl, layout) {
   // css.insertAfter(rule, layout.childrenRule);
+  var parent = rule.parent;
 
   objToRule(layout.container, rule);
   rule.insertAfter(decl, {prop: 'display', value: 'table', source: decl.source});
@@ -352,7 +357,7 @@ function rowLayout(css, rule, decl, layout) {
 
   layout.item['display'] = 'table-row';
 
-  css.insertAfter(rule, objToRule(layout.item));
+  parent.insertAfter(rule, objToRule(layout.item));
 
   // Remove the 'layout' property from the result.
   decl.remove();
