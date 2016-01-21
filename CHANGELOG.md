@@ -1,3 +1,10 @@
+## [1.1.1] - 2016-01-21
+### Changed
+- Fixed nested rule (@media) bug, by switching from using root to do inserts to the parent of the source rule.
+eg. css.insertAfter -> parent.insertAfter.
+- Fixed grid system bug in gutter value | unit regex extractor, 
+regex did not account for floating point / decimal point values, eg. 3.2rem.
+
 ## [1.1.0] - 2015-11-16
 ### Added
 - layout: flow, float based layout.
