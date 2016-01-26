@@ -175,22 +175,26 @@ function processLayoutConf(css, result, rule, decl, grids, layout) {
     layout.grid = grid;
   }
   // Look for grid control props like span.
-  else if(decl.prop.indexOf('span') + 1) {
+  else if(decl.prop.indexOf('span') + 1 || decl.prop.indexOf('buffer') + 1 || decl.prop.indexOf('shift') + 1) {
     // console.log(decl.prop, decl.value);
     var grid = null;
-    // TODO: Do a suffix check on '-span' instead of just a split on '-',
+    // DONE: Do a suffix check on '-span' instead of just a split on '-',
     // in case the gridName has a '-' in it.
-    var gridName = decl.prop.split('-');
-    gridName = gridName.length == 2 ? gridName[0] : null;
+    // var gridName = decl.prop.split('-');
+    // gridName = gridName.length == 2 ? gridName[0] : null;
+    var gridName = decl.prop.match(/(.*)-(span|action)/);
+    var gridAction = gridName.length == 3 ? gridName[2] : null;
+    gridName = gridName.length == 3 ? gridName[1] : null;
     grid = gridName ? grids[gridName] : null;
 
     if(!grid) {
-      throw decl.error('Unknown grid name in span property: ' + decl.prop, { plugin: 'postcss-layout' });
+      throw decl.error('Unknown grid name in span/action property: ' + decl.prop, { plugin: 'postcss-layout' });
     }
 
     layout.isGridItem = true;
     layout.gridItemDecl = decl;
     layout.grid = grid;
+    layout.gridAction = gridAction;
   }
 }
 
@@ -388,6 +392,22 @@ function gridContainer(css, rule, decl, grid) {
 }
 
 function gridItem(css, rule, decl, grid) {
+  // Get the grid ratio value for later span and buffer calculations.
+  var gridRatio = grid.count ? 100/grid.count : null;
+  if(!gridRatio) {
+    throw decl.error('Improperly defined grid, check your @grid rule. ' + decl.prop, { plugin: 'postcss-layout', grid: grid });
+  }
+
+  // Break up the property value into it's span, buffer, shift values.
+  var propValue = postcss.list.comma(decl.value);
+  if(propValue.length == 0) {
+    throw decl.error('Span/action must have at least one value. ' + decl.prop, { plugin: 'postcss-layout' });
+  }
+  if(propValue.length > 1) {
+    propValue[1] = postcss.list.space(propValue[1]);
+  }
+
+  // Get margin values for items from grid gutter setting.
   var gutterH = grid.gutterH ? grid.gutterH.match(/(\d+\.?\d*)(\D*)/) : [0, 0];
   var gutterHUnits = gutterH[2] || '';
   var marginH = Number(gutterH[1]) ? gutterH[1]/2 + gutterHUnits : 0;
@@ -396,20 +416,47 @@ function gridItem(css, rule, decl, grid) {
   var gutterVUnits = gutterV[2] || '';
   var marginV = Number(gutterV[1]) ? gutterV[1]/2 + gutterVUnits : 0;
 
-  var width = grid.count ? 100/grid.count * decl.value + '%' : 'auto';
+  // Get the margin values for any buffer values for the item (compounded with marginH if gutter was set).
+  if(propValue[1] && propValue[1][0] != 0) {
+    var buffer = gridRatio * propValue[1][0] + '%';
+    if(marginH)
+      buffer = 'calc(' + buffer  + ' + ' + marginH + ')';
+  }
+  if(propValue[1] && propValue[1][1]) {
+    var bufferL = buffer;
+    buffer = null;
+    if(propValue[1][1] != 0) {
+      var bufferR = gridRatio * propValue[1][1] + '%';
+      if(marginH)
+        bufferR = 'calc(' + bufferR + ' + ' + marginH + ')';
+    }
+  }
+  // console.log(propValue);
+  // console.log(buffer, bufferL, bufferR);
+
+  // Get shift value for left property of item.
+  if(propValue[2]){
+    var shift = gridRatio * propValue[2] + '%';
+  }
+
+  // Get the width value for the item.
+  var width = grid.count ? gridRatio * propValue[0] + '%' : 'auto';
   var calc = marginH ? 'calc(' + width + ' - ' + grid.gutterH + ')' : width;
 
   // console.log(marginV);
 
   if(width != 'auto')
     rule.insertAfter(decl, {prop:'width', value: calc, source: decl.source});
-  if(marginH) {
-    rule.insertAfter(decl, {prop:'margin-left', value: marginH, source: decl.source});
-    rule.insertAfter(decl, {prop:'margin-right', value: marginH, source: decl.source});
+  if(buffer || bufferL || bufferR || marginH) {
+    rule.insertAfter(decl, {prop:'margin-left', value: buffer || bufferL || marginH || '0', source: decl.source});
+    rule.insertAfter(decl, {prop:'margin-right', value: buffer || bufferR || marginH || '0', source: decl.source});
   }
   if(marginV) {
     rule.insertAfter(decl, {prop:'margin-top', value: marginV, source: decl.source});
     rule.insertAfter(decl, {prop:'margin-bottom', value: marginV, source: decl.source});
+  }
+  if(shift) {
+    rule.insertAfter(decl, {prop:'left', value: shift, source: decl.source});
   }
 
   // Remove the 'span' property from the result.
