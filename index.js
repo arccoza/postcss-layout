@@ -448,8 +448,8 @@ function gridItem(css, rule, decl, grid) {
   if(width != 'auto')
     rule.insertAfter(decl, {prop:'width', value: calc, source: decl.source});
   if(buffer || bufferL || bufferR || marginH) {
-    rule.insertAfter(decl, {prop:'margin-left', value: buffer || bufferL || marginH || '0', source: decl.source});
-    rule.insertAfter(decl, {prop:'margin-right', value: buffer || bufferR || marginH || '0', source: decl.source});
+    rule.insertAfter(decl, {prop:'margin-left', value: buffer || bufferL || marginH || '0' + ' !important', source: decl.source});
+    rule.insertAfter(decl, {prop:'margin-right', value: buffer || bufferR || marginH || '0' + ' !important', source: decl.source});
   }
   if(marginV) {
     rule.insertAfter(decl, {prop:'margin-top', value: marginV, source: decl.source});
