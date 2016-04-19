@@ -1,7 +1,4 @@
 # postcss-layout [![Travis Build Status][travis-img]][travis]
-[travis]:       https://travis-ci.org/arccoza/postcss-layout
-[travis-img]:   https://img.shields.io/travis/arccoza/postcss-layout.svg
-[demo]:         http://arccoza.github.io/postcss-layout/
 
 A PostCSS plugin for some common CSS layout patterns and a Grid system. [Demo][demo]
 
@@ -17,6 +14,9 @@ The plugin uses CSS `calc` for the grid system. Layouts have been tested to work
 See the [demo][demo] or the example in the `example/` directory for usage.
 
 All layout elements are given `box-sizing: border-box;` by default.
+
+## New!
+You can now add `buffer` and `shift` values to your grid span properties to create space around elements (with `buffer` values) or move them horizontally (with `shift` value) without bumping neighbours. Read more bellow.
 
 ## Install
 `npm install postcss-layout --save-dev`
@@ -255,11 +255,11 @@ You **must** set `layout:lines` or `layout:flow` or `layout:columns` on the cont
 
 ```css
 .child {
-  GRID_NAME-span: 6;
+  GRID_NAME-span: WIDTH [, BUFFER / BUFFER_LEFT BUFFER_RIGHT [, SHIFT ] ];
 }
 ```
 
-Use the `GRID_NAME-span` property in a child to define its width relative to the container grid.
+Use the `GRID_NAME-span` property in a child to define its width relative to the container grid. You can also optionally provide `BUFFER` values; A single `BUFFER` value adds that much spacing to both the left and right side of the child. Use `BUFFER_LEFT` and `BUFFER_RIGHT` individual values to set different spacing for each side. There is also an optional `SHIFT` value; A positive `SHIFT` value moves the child right, a negative `SHIFT` value moves the child left, this move will not affect the flow of the other child elements, you must provide a value for `BUFFER` to use `SHIFT`, just use 0 if you don't want any buffer. 
 
 #### Caveats
 As mentioned before, you cannot use `em` units for gutters in a `layout:lines` container.
@@ -279,14 +279,14 @@ You cannot use gutters with `layout:columns`, and the items will always stretch 
 }
 
 .child {
-  g12-span: 4;
+  g12-span: 4, 2 0, -1;
 }
 
 /* Output. */
 .container {
   box-sizing: border-box;
-  margin-right: -0.5em;
-  margin-left: -0.5em;
+  margin-right: -5px;
+  margin-left: -5px;
 }
 .container > * {
   box-sizing: border-box;
@@ -302,8 +302,14 @@ You cannot use gutters with `layout:columns`, and the items will always stretch 
 }
 
 .child {
-  margin-right: 0.5em;
-  margin-left: 0.5em;
+  left: -8.333333333333334%;
+  margin-right: 5px;
+  margin-left: calc(16.666666666666668% + 5px);
   width: calc(33.333333333333336% - 10px);
 }
 ```
+
+
+[travis]:       https://travis-ci.org/arccoza/postcss-layout
+[travis-img]:   https://img.shields.io/travis/arccoza/postcss-layout.svg
+[demo]:         http://arccoza.github.io/postcss-layout/

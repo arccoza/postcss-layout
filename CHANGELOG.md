@@ -1,3 +1,7 @@
+## [1.2.0] - 2016-04-19
+### Added
+- `buffer` and `shift` span values, to move and space grid items.
+
 ## [1.1.1] - 2016-01-21
 ### Changed
 - Fixed nested rule (@media) bug, by switching from using root to do inserts to the parent of the source rule.
