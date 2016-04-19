@@ -1,6 +1,6 @@
 {
   "name": "postcss-layout",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "A postcss plugin to generate common, cross browser, CSS layouts, using the custom property 'layout', includes a grid layout (with optional gutters).",
   "main": "index.js",
   "scripts": {
