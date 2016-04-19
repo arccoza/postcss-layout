@@ -15,7 +15,7 @@ See the [demo][demo] or the example in the `example/` directory for usage.
 
 All layout elements are given `box-sizing: border-box;` by default.
 
-## New
+## New!
 You can now add `buffer` and `shift` values to your grid span properties to create space around elements (with `buffer` values) or move them horizontally (with `shift` value) without bumping neighbours. Read more bellow.
 
 ## Install
